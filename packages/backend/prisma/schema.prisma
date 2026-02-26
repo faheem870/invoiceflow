@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  seller
+  payer
+  investor
+  arbitrator
+}
+
+enum InvoiceStatus {
+  draft
+  awaiting_approval
+  approved
+  listed
+  sold
+  disputed
+  paid
+  cancelled
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  walletAddress String    @unique @map("wallet_address") @db.VarChar(42)
+  displayName   String?   @map("display_name") @db.VarChar(100)
+  role          UserRole  @default(seller)
+  avatarUrl     String?   @map("avatar_url") @db.VarChar(500)
+  email         String?   @db.VarChar(320)
+  desciOptIn    Boolean   @default(false) @map("desci_opt_in")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Invoice {
+  id                  Int           @id @default(autoincrement())
+  tokenId             Int?          @unique @map("token_id")
+  invoiceHash         String?       @map("invoice_hash") @db.VarChar(66)
+  amount              Decimal       @db.Decimal(78, 0)
+  amountDisplay       String?       @map("amount_display") @db.VarChar(50)
+  tokenAddress        String        @map("token_address") @db.VarChar(42)
+  tokenSymbol         String        @default("mUSDT") @map("token_symbol") @db.VarChar(10)
+  sellerAddress       String        @map("seller_address") @db.VarChar(42)
+  payerAddress        String        @map("payer_address") @db.VarChar(42)
+  currentOwnerAddress String?       @map("current_owner_address") @db.VarChar(42)
+  status              InvoiceStatus @default(draft)
+  dueDate             DateTime      @map("due_date")
+  title               String?       @db.VarChar(200)
+  description         String?       @db.Text
+  pdfIpfsHash         String?       @map("pdf_ipfs_hash") @db.VarChar(100)
+  pdfUrl              String?       @map("pdf_url") @db.VarChar(500)
+  isMilestone         Boolean       @default(false) @map("is_milestone")
+  milestoneDescription String?      @map("milestone_description") @db.Text
+  mintTxHash          String?       @map("mint_tx_hash") @db.VarChar(66)
+  chainId             Int           @default(97) @map("chain_id")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  payments  Payment[]
+  listings  Listing[]
+  disputes  Dispute[]
+
+  @@map("invoices")
+}
+
+model Payment {
+  id               Int      @id @default(autoincrement())
+  invoiceId        Int      @map("invoice_id")
+  tokenId          Int?     @map("token_id")
+  payerAddress     String   @map("payer_address") @db.VarChar(42)
+  recipientAddress String   @map("recipient_address") @db.VarChar(42)
+  amount           Decimal  @db.Decimal(78, 0)
+  fee              Decimal? @db.Decimal(78, 0)
+  txHash           String   @map("tx_hash") @db.VarChar(66)
+  chainId          Int      @default(97) @map("chain_id")
+  paidAt           DateTime @default(now()) @map("paid_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("payments")
+}
+
+model Listing {
+  id              Int      @id @default(autoincrement())
+  invoiceId       Int      @map("invoice_id")
+  tokenId         Int      @map("token_id")
+  sellerAddress   String   @map("seller_address") @db.VarChar(42)
+  salePrice       Decimal  @map("sale_price") @db.Decimal(78, 0)
+  originalAmount  Decimal  @map("original_amount") @db.Decimal(78, 0)
+  discountPercent String?  @map("discount_percent") @db.VarChar(10)
+  paymentToken    String   @map("payment_token") @db.VarChar(42)
+  expiry          DateTime
+  isActive        Boolean  @default(true) @map("is_active")
+  buyerAddress    String?  @map("buyer_address") @db.VarChar(42)
+  buyTxHash       String?  @map("buy_tx_hash") @db.VarChar(66)
+  listTxHash      String?  @map("list_tx_hash") @db.VarChar(66)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("listings")
+}
+
+model Dispute {
+  id             Int       @id @default(autoincrement())
+  invoiceId      Int       @map("invoice_id")
+  tokenId        Int?      @map("token_id")
+  disputedBy     String    @map("disputed_by") @db.VarChar(42)
+  reason         String?   @db.Text
+  resolution     String?   @db.Text
+  resolvedBy     String?   @map("resolved_by") @db.VarChar(42)
+  isResolved     Boolean   @default(false) @map("is_resolved")
+  disputeTxHash  String?   @map("dispute_tx_hash") @db.VarChar(66)
+  resolveTxHash  String?   @map("resolve_tx_hash") @db.VarChar(66)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  resolvedAt     DateTime? @map("resolved_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("disputes")
+}
+
+model ResearchDonation {
+  id           Int      @id @default(autoincrement())
+  donorAddress String   @map("donor_address") @db.VarChar(42)
+  amount       Decimal  @db.Decimal(78, 0)
+  txHash       String   @map("tx_hash") @db.VarChar(66)
+  source       String   @default("direct") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("research_donations")
+}
+
+model ResearchGrant {
+  id               Int       @id @default(autoincrement())
+  recipientAddress String    @map("recipient_address") @db.VarChar(42)
+  amount           Decimal   @db.Decimal(78, 0)
+  purpose          String?   @db.Text
+  isExecuted       Boolean   @default(false) @map("is_executed")
+  txHash           String?   @map("tx_hash") @db.VarChar(66)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  executedAt       DateTime? @map("executed_at")
+
+  @@map("research_grants")
+}
+
+model Notification {
+  id               Int      @id @default(autoincrement())
+  recipientAddress String   @map("recipient_address") @db.VarChar(42)
+  type             String   @db.VarChar(50)
+  title            String   @db.VarChar(200)
+  message          String?  @db.Text
+  invoiceId        Int?     @map("invoice_id")
+  isRead           Boolean  @default(false) @map("is_read")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}

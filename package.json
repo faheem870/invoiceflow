@@ -1,0 +1,23 @@
+{
+  "name": "invoiceflow",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/contracts",
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm -w packages/frontend run dev",
+    "dev:backend": "npm -w packages/backend run dev",
+    "build:contracts": "npm -w packages/contracts run compile",
+    "build:frontend": "npm -w packages/frontend run build",
+    "build:backend": "npm -w packages/backend run build",
+    "deploy:testnet": "npm -w packages/contracts run deploy:testnet",
+    "test:contracts": "npm -w packages/contracts run test",
+    "db:push": "npm -w packages/backend run db:push",
+    "db:generate": "npm -w packages/backend run db:generate",
+    "db:migrate": "npm -w packages/backend run db:migrate"
+  }
+}
