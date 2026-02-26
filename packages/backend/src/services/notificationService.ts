@@ -4,7 +4,7 @@ import { prisma } from '../lib/prisma';
 // ---- Types ----
 
 export interface PaginatedNotifications {
-  data: Prisma.NotificationGetPayload<object>[];
+  data: any[];
   pagination: {
     page: number;
     limit: number;
@@ -25,7 +25,7 @@ export class NotificationService {
     title: string,
     message: string,
     invoiceId?: number,
-  ): Promise<Prisma.NotificationGetPayload<object>> {
+  ): Promise<any> {
     try {
       const notification = await prisma.notification.create({
         data: {
@@ -58,7 +58,7 @@ export class NotificationService {
     const limitNum = Math.min(100, Math.max(1, limit));
     const skip = (pageNum - 1) * limitNum;
 
-    const where: Prisma.NotificationWhereInput = {
+    const where: any = {
       recipientAddress: recipientAddress.toLowerCase(),
     };
 
@@ -90,7 +90,7 @@ export class NotificationService {
   /**
    * Mark a single notification as read.
    */
-  async markAsRead(id: number): Promise<Prisma.NotificationGetPayload<object>> {
+  async markAsRead(id: number): Promise<any> {
     const notification = await prisma.notification.findUnique({ where: { id } });
     if (!notification) {
       throw new Error(`Notification with id=${id} not found`);

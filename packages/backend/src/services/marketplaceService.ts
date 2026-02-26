@@ -20,7 +20,7 @@ export interface MarketplaceStats {
 }
 
 export interface PaginatedListings {
-  data: Prisma.ListingGetPayload<{ include: { invoice: true } }>[];
+  data: any[];
   pagination: {
     page: number;
     limit: number;
@@ -41,7 +41,7 @@ export class MarketplaceService {
     const limit = Math.min(100, Math.max(1, filters.limit ?? 20));
     const skip = (page - 1) * limit;
 
-    const where: Prisma.ListingWhereInput = {
+    const where: any = {
       isActive: true,
       expiry: { gt: new Date() },
     };
@@ -53,12 +53,12 @@ export class MarketplaceService {
       where.paymentToken = filters.paymentToken.toLowerCase();
     }
     if (filters.minPrice || filters.maxPrice) {
-      const salePriceFilter: Prisma.DecimalFilter<'Listing'> = {};
+      const salePriceFilter: any = {};
       if (filters.minPrice) {
-        salePriceFilter.gte = new Prisma.Decimal(filters.minPrice);
+        salePriceFilter.gte = filters.minPrice;
       }
       if (filters.maxPrice) {
-        salePriceFilter.lte = new Prisma.Decimal(filters.maxPrice);
+        salePriceFilter.lte = filters.maxPrice;
       }
       where.salePrice = salePriceFilter;
     }
@@ -140,7 +140,7 @@ export class MarketplaceService {
     // Compute average discount
     let averageDiscountPercent = 0;
     if (discountResult.length > 0) {
-      const sum = discountResult.reduce((acc, item) => {
+      const sum = discountResult.reduce((acc: number, item: any) => {
         return acc + parseFloat(item.discountPercent ?? '0');
       }, 0);
       averageDiscountPercent = parseFloat((sum / discountResult.length).toFixed(2));
@@ -162,7 +162,7 @@ export class MarketplaceService {
     listingId: number,
     buyerAddress: string,
     buyTxHash?: string,
-  ): Promise<Prisma.ListingGetPayload<{ include: { invoice: true } }>> {
+  ): Promise<any> {
     const listing = await prisma.listing.findUnique({
       where: { id: listingId },
       include: { invoice: true },

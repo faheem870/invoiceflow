@@ -86,7 +86,7 @@ export class AiService {
     let onTimeCount = 0;
     if (totalPayments > 0) {
       for (const payment of payerPayments) {
-        const relatedInvoice = payerInvoices.find((inv) => inv.id === payment.invoiceId);
+        const relatedInvoice = payerInvoices.find((inv: any) => inv.id === payment.invoiceId);
         if (relatedInvoice && payment.paidAt <= relatedInvoice.dueDate) {
           onTimeCount++;
         }

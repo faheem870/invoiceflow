@@ -91,7 +91,7 @@ export class InvoiceService {
         where: { tokenId },
         update: {
           invoiceHash,
-          amount: new Prisma.Decimal(amount.toString()),
+          amount: amount.toString(),
           amountDisplay,
           tokenAddress: tokenAddress.toLowerCase(),
           payerAddress: payerAddress.toLowerCase(),
@@ -104,7 +104,7 @@ export class InvoiceService {
         create: {
           tokenId,
           invoiceHash,
-          amount: new Prisma.Decimal(amount.toString()),
+          amount: amount.toString(),
           amountDisplay,
           tokenAddress: tokenAddress.toLowerCase(),
           payerAddress: payerAddress.toLowerCase(),
@@ -125,12 +125,12 @@ export class InvoiceService {
   /**
    * Query invoices from the database with optional filters and pagination.
    */
-  async getInvoicesByFilter(filter: InvoiceFilter): Promise<PaginatedResult<Prisma.InvoiceGetPayload<{ include: { listings: true; payments: true; disputes: true } }>>> {
+  async getInvoicesByFilter(filter: InvoiceFilter): Promise<PaginatedResult<any>> {
     const page = Math.max(1, filter.page ?? 1);
     const limit = Math.min(100, Math.max(1, filter.limit ?? 20));
     const skip = (page - 1) * limit;
 
-    const where: Prisma.InvoiceWhereInput = {};
+    const where: any = {};
     if (filter.sellerAddress) where.sellerAddress = filter.sellerAddress.toLowerCase();
     if (filter.payerAddress) where.payerAddress = filter.payerAddress.toLowerCase();
     if (filter.currentOwnerAddress) where.currentOwnerAddress = filter.currentOwnerAddress.toLowerCase();
@@ -166,7 +166,7 @@ export class InvoiceService {
   /**
    * Update the status of an invoice in the local database.
    */
-  async updateInvoiceStatus(id: number, status: InvoiceStatus): Promise<Prisma.InvoiceGetPayload<object>> {
+  async updateInvoiceStatus(id: number, status: InvoiceStatus): Promise<any> {
     const existing = await prisma.invoice.findUnique({ where: { id } });
     if (!existing) {
       throw new Error(`Invoice with id=${id} not found`);

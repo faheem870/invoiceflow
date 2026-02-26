@@ -197,7 +197,7 @@ export class EventListener {
             where: { tokenId: Number(tokenId) },
             update: {
               invoiceHash,
-              amount: new Prisma.Decimal(amount.toString()),
+              amount: amount.toString(),
               amountDisplay: ethers.formatUnits(amount, 18),
               tokenAddress: token.toLowerCase(),
               sellerAddress: seller.toLowerCase(),
@@ -211,7 +211,7 @@ export class EventListener {
             create: {
               tokenId: Number(tokenId),
               invoiceHash,
-              amount: new Prisma.Decimal(amount.toString()),
+              amount: amount.toString(),
               amountDisplay: ethers.formatUnits(amount, 18),
               tokenAddress: token.toLowerCase(),
               sellerAddress: seller.toLowerCase(),
@@ -434,8 +434,8 @@ export class EventListener {
                 tokenId: Number(invoiceId),
                 payerAddress: payer.toLowerCase(),
                 recipientAddress: recipient.toLowerCase(),
-                amount: new Prisma.Decimal(amount.toString()),
-                fee: new Prisma.Decimal(protocolFee.toString()),
+                amount: amount.toString(),
+                fee: protocolFee.toString(),
                 txHash: event.transactionHash,
                 chainId: Number(env.CHAIN_ID),
                 paidAt: new Date(),
@@ -447,7 +447,7 @@ export class EventListener {
               await prisma.researchDonation.create({
                 data: {
                   donorAddress: payer.toLowerCase(),
-                  amount: new Prisma.Decimal(researchFee.toString()),
+                  amount: researchFee.toString(),
                   txHash: event.transactionHash,
                   source: 'escrow_fee',
                 },
@@ -522,7 +522,7 @@ export class EventListener {
                 invoiceId: invoice.id,
                 tokenId: Number(invoiceId),
                 sellerAddress: seller.toLowerCase(),
-                salePrice: new Prisma.Decimal(salePrice.toString()),
+                salePrice: salePrice.toString(),
                 originalAmount: invoice.amount,
                 discountPercent,
                 paymentToken: paymentToken.toLowerCase(),
