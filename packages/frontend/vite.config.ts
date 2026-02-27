@@ -4,6 +4,14 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    target: 'es2022',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2022',
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
