@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref<string | null>(null);
 
   const isConnected = computed(() => !!address.value);
-  const isAuthenticated = computed(() => !!jwt.value && !!user.value);
+  const isAuthenticated = computed(() => !!user.value);
   const userRole = computed(() => user.value?.role || 'seller');
 
   function setAddress(addr: string | null) {

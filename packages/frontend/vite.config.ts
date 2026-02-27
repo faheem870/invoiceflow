@@ -14,6 +14,7 @@ export default defineConfig({
     esbuildOptions: {
       target: 'esnext',
     },
+    include: ['ethers'],
   },
   resolve: {
     alias: {

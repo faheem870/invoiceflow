@@ -48,32 +48,15 @@ async function handleConnect() {
     return;
   }
 
-  // Step 2: Sign authentication message
-  step.value = 'signing';
-  const timestamp = Date.now();
-  const message = `Sign this message to authenticate with InvoiceFlow.\n\nWallet: ${walletAddress}\nTimestamp: ${timestamp}`;
-
-  const signature = await web3.signMessage(message);
-
-  if (!signature) {
-    errorMessage.value = web3.error.value || 'Signature rejected.';
-    step.value = 'role';
-    return;
-  }
-
-  // Step 3: Authenticate with backend
-  const user = await authStore.authenticate(walletAddress, signature, message);
-
-  if (!user) {
-    errorMessage.value = authStore.error || 'Backend authentication failed.';
-    step.value = 'role';
-    return;
-  }
-
-  // Step 4: Set role if different from default
-  if (user.role !== selectedRole.value) {
-    await authStore.updateRole(selectedRole.value!);
-  }
+  // Step 2: Set up local session (no backend required)
+  authStore.setAddress(walletAddress);
+  authStore.setUser({
+    id: 0,
+    walletAddress,
+    displayName: walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4),
+    role: selectedRole.value!,
+    desciOptIn: false,
+  });
 
   // Step 5: Navigate to dashboard
   const redirect = route.query.redirect as string | undefined;
