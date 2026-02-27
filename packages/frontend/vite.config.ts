@@ -5,11 +5,14 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [vue()],
   build: {
-    target: 'es2022',
+    target: 'esnext',
+  },
+  esbuild: {
+    target: 'esnext',
   },
   optimizeDeps: {
     esbuildOptions: {
-      target: 'es2022',
+      target: 'esnext',
     },
   },
   resolve: {
