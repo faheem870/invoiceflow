@@ -7,7 +7,7 @@ node_modules/
 .env.*.local
 
 # Build outputs
-dist/
+# dist/
 build/
 
 # Hardhat
@@ -43,3 +43,4 @@ coverage/
 # Large files
 packages/frontend/public/hero-video.mp4
 untitled folder/
+*.mp4
