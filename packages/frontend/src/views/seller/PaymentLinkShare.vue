@@ -39,7 +39,7 @@ function copyLink() {
       </div>
 
       <div class="bg-muted rounded-lg p-8 flex items-center justify-center">
-        <div class="w-48 h-48 bg-white rounded-lg flex items-center justify-center border">
+        <div class="w-48 h-48 bg-white dark:bg-gray-900 rounded-lg flex items-center justify-center border">
           <span class="text-muted-foreground text-sm">QR Code</span>
         </div>
       </div>

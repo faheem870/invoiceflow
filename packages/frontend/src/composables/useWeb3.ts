@@ -32,7 +32,15 @@ export function useWeb3() {
 
     try {
       const browserProvider = new BrowserProvider(window.ethereum);
-      const accounts = await browserProvider.send('eth_requestAccounts', []);
+
+      // Wrap eth_requestAccounts with a 30s timeout so we don't spin forever
+      // if MetaMask popup is blocked or unresponsive
+      const accounts = await Promise.race([
+        browserProvider.send('eth_requestAccounts', []),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Wallet connection timed out. Please open MetaMask and try again.')), 30_000),
+        ),
+      ]);
 
       if (accounts.length === 0) {
         error.value = 'No accounts found. Please unlock your wallet.';

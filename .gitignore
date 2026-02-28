@@ -39,3 +39,7 @@ npm-debug.log*
 # Coverage
 coverage/
 .nyc_output/
+
+# Large files
+packages/frontend/public/hero-video.mp4
+untitled folder/

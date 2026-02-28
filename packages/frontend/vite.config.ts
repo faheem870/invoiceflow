@@ -8,11 +8,11 @@ export default defineConfig({
     target: 'esnext',
   },
   esbuild: {
-    target: 'esnext',
+    target: 'es2021',
   },
   optimizeDeps: {
     esbuildOptions: {
-      target: 'esnext',
+      target: 'es2021',
     },
     include: ['ethers'],
   },

@@ -68,9 +68,7 @@ function isActive(path: string): boolean {
   >
     <!-- Logo -->
     <div class="h-16 flex items-center px-4 border-b border-border">
-      <div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-        <span class="text-primary-foreground font-bold text-sm">IF</span>
-      </div>
+      <img src="@/assets/logo.png" alt="InvoiceFlow" class="h-8 w-8 rounded-lg flex-shrink-0 object-contain" />
       <span v-if="!collapsed" class="ml-2 font-bold text-lg">InvoiceFlow</span>
     </div>
 

@@ -40,31 +40,38 @@ async function handleConnect() {
 
   // Step 1: Connect wallet
   step.value = 'connecting';
-  const walletAddress = await web3.connect();
 
-  if (!walletAddress) {
-    errorMessage.value = web3.error.value || 'Failed to connect wallet.';
+  try {
+    const walletAddress = await web3.connect();
+
+    if (!walletAddress) {
+      errorMessage.value = web3.error.value || 'Failed to connect wallet.';
+      step.value = 'role';
+      return;
+    }
+
+    // Step 2: Set up local session (no backend required)
+    authStore.setAddress(walletAddress);
+    authStore.setUser({
+      id: 0,
+      walletAddress,
+      displayName: walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4),
+      role: selectedRole.value!,
+      desciOptIn: false,
+    });
+
+    // Step 3: Navigate to dashboard
+    const redirect = route.query.redirect as string | undefined;
+    if (redirect) {
+      router.push(redirect);
+    } else {
+      const role = roles.find(r => r.id === selectedRole.value);
+      router.push(role?.path || '/seller');
+    }
+  } catch (err: any) {
+    errorMessage.value = err.message || 'Failed to connect wallet.';
+  } finally {
     step.value = 'role';
-    return;
-  }
-
-  // Step 2: Set up local session (no backend required)
-  authStore.setAddress(walletAddress);
-  authStore.setUser({
-    id: 0,
-    walletAddress,
-    displayName: walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4),
-    role: selectedRole.value!,
-    desciOptIn: false,
-  });
-
-  // Step 5: Navigate to dashboard
-  const redirect = route.query.redirect as string | undefined;
-  if (redirect) {
-    router.push(redirect);
-  } else {
-    const role = roles.find(r => r.id === selectedRole.value);
-    router.push(role?.path || '/seller');
   }
 }
 

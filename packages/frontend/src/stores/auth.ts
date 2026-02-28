@@ -109,8 +109,9 @@ export const useAuthStore = defineStore('auth', () => {
       setAddress(data.walletAddress);
       return data;
     } catch {
-      // JWT expired or invalid — clear session
-      disconnect();
+      // JWT expired or invalid — clear only JWT, keep local session if set
+      jwt.value = null;
+      localStorage.removeItem('invoiceflow_jwt');
       return null;
     }
   }
@@ -127,6 +128,9 @@ export const useAuthStore = defineStore('auth', () => {
    * Load JWT from localStorage and try to restore the session.
    */
   async function loadSession(): Promise<boolean> {
+    // If already authenticated locally (e.g. wallet-only session), skip
+    if (user.value) return true;
+
     const stored = localStorage.getItem('invoiceflow_jwt');
     if (stored) {
       jwt.value = stored;

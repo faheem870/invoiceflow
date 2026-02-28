@@ -34,7 +34,7 @@ async function resolve(disputeId: number, approved: boolean) {
             <h3 class="font-semibold">{{ d.title }}</h3>
             <p class="text-xs text-muted-foreground mt-0.5">Invoice #{{ d.invoiceId }} | ${{ d.amount }} mUSDT | Filed: {{ d.createdAt }}</p>
           </div>
-          <span :class="['text-xs px-2.5 py-0.5 rounded-full font-medium', d.status === 'open' ? 'bg-red-100 text-red-700' : d.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700']">
+          <span :class="['text-xs px-2.5 py-0.5 rounded-full font-medium', d.status === 'open' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : d.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300']">
             {{ d.status }}
           </span>
         </div>
